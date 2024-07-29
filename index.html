@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        const proxyUrl = 'http://localhost:3000/';
+        const targetUrl = 'https://poweron.loe.lviv.ua/';
+
+        let previousText = '';
+        let previousOrangeZones = '';
+
+        async function checkUpdates() {
+            try {
+                const response = await fetch(proxyUrl);
+                const text = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(text);
+                console.log(doc)
+                // Извлечение текста до первой картинки
+                const bodyText = Array.from(doc.body.childNodes)
+                    .filter(node => node.nodeType === Node.TEXT_NODE)
+                    .map(node => node.textContent.trim())
+                    .filter(text => text.length > 0)
+                    .join(' ');
+
+                const firstImage = doc.querySelector('img');
+
+                // Обработка случая, если изображение найдено
+                let orangeZones = '';
+                if (firstImage) {
+                    // Логика определения оранжевых зон на изображении
+                    // Пример: если изображение имеет специфический класс или атрибут
+                    if (firstImage.classList.contains('orange-zone')) {
+                        orangeZones = 'Есть оранжевые зоны';
+                    }
+                }
+
+                // Сравнение с предыдущими данными
+                if (bodyText !== previousText) {
+                    console.log('Текст изменился:', bodyText);
+                    previousText = bodyText;
+                } else {
+                    console.log('Текст не изменился.');
+                }
+
+                if (orangeZones !== previousOrangeZones) {
+                    console.log('Оранжевые зоны изменились:', orangeZones);
+                    previousOrangeZones = orangeZones;
+                } else {
+                    console.log('Оранжевые зоны не изменились.');
+                }
+
+            } catch (error) {
+                console.error('Ошибка при получении страницы:', error);
+            }
+        }
+
+        // Запуск проверки каждые 5 минут (300000 миллисекунд)
+        setInterval(checkUpdates, 5000);
+
+        // Первый запуск
+        checkUpdates();
+    </script> 
+</body>
+</html>
