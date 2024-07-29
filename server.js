@@ -28,9 +28,6 @@ async function getTextAndImageFromSite() {
       await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
       await page.waitForSelector(`.${className}`, { timeout: 60000 });
 
-      const htmlContent = await page.content();
-      fs.writeFileSync('page_content.html', htmlContent);
-
       const { text, imageSrc } = await page.evaluate(className => {
           const element = document.querySelector(`.${className}`);
           if (!element) {
@@ -119,7 +116,7 @@ async function checkForUpdates() {
 }
 
 // Запуск проверки каждые 5 минут (300000 миллисекунд)
-setInterval(checkForUpdates, 5000);
+setInterval(checkForUpdates, 50000);
 
 // Первый запуск
 checkForUpdates();
