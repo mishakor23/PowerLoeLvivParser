@@ -115,8 +115,12 @@ async function checkForUpdates() {
     }
 }
 
-// Запуск проверки каждые 5 минут (300000 миллисекунд)
-setInterval(checkForUpdates, 50000);
+function checkTheBotIsAlive() {
+  bot.sendMessage(chatId, `I'm still alive`);
+}
 
+// Запуск проверки каждые 5 минут (300000 миллисекунд)
+setInterval(checkForUpdates, 300000);
+setInterval(checkTheBotIsAlive, 3600000);
 // Первый запуск
 checkForUpdates();
